@@ -4,7 +4,7 @@ const validateRegister = [
     body("email")
         .isEmail().withMessage("Введите корректный email")
         .normalizeEmail(),
-    
+
     body("password")
         .isLength({ min: 8 }).withMessage("Пароль должен быть минимум 8 символов")
         .matches(/[A-Z]/).withMessage("Пароль должен содержать хотя бы одну заглавную букву")
@@ -17,7 +17,7 @@ const validateLogin = [
     body("email")
         .isEmail().withMessage("Введите корректный email")
         .normalizeEmail(),
-    
+
     body("password")
         .notEmpty().withMessage("Пароль обязателен")
 ];

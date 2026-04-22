@@ -4,29 +4,9 @@ const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
 const router = express.Router();
 const db = require("../config/db");
-const validate = require("../middleware/validate");
-
-const validateRegister = [
-    body('email')
-        .isEmail().withMessage('Введите корректный email')
-        .normalizeEmail(),
-    
-    body('password')
-        .isLength({ min: 8 }).withMessage('Пароль должен быть минимум 8 символов')
-        .matches(/[A-Z]/).withMessage('Пароль должен содержать хотя бы одну заглавную букву')
-        .matches(/[a-z]/).withMessage('Пароль должен содержать хотя бы одну строчную букву')
-        .matches(/[0-9]/).withMessage('Пароль должен содержать хотя бы одну цифру')
-        .matches(/[!@#$%^&*(),.?":{}|<>]/).withMessage('Пароль должен содержать хотя бы один специальный символ')
-];
-
-const validateLogin = [
-    body('email')
-        .isEmail().withMessage('Введите корректный email')
-        .normalizeEmail(),
-    
-    body('password')
-        .notEmpty().withMessage('Пароль обязателен')
-];
+const validate = require("../validation/validate");
+const { validateRegister, validateLogin } = require("../validation/authValidators");
+const authMiddleware = require("../middleware/authMiddleware");
 
 // Регистрация нового пользователя
 router.post("/register", validateRegister, validate, async (req, res) => {
@@ -112,5 +92,23 @@ router.post("/login", validateLogin, validate, async (req, res) => {
     }
 });
 
+// Информация о пользователе
+router.get("/my", authMiddleware, async (req,res) => {
+    try{
+        const result = await db.query(
+            "SELECT id, email, created_at FROM users WHERE id = $1",
+            [req.userId]
+        );
+
+        if(result.rows.length === 0) {
+            return res.status(404).json({ error: "Пользователь не найден"})
+        }
+
+        res.json({ user: result.rows[0]})
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Ошибка сервера "})
+    }
+})
 
 module.exports = router;

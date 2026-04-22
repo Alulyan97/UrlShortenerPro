@@ -1,28 +1,28 @@
-const jwt =require ("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
-    const header = req.headers.authorization;
+    const authHeader = req.headers.authorization;
 
-    if(!header) {
-        return res.status(401).json({ error: "Токен не предоставлен"})
+    if (!authHeader) {
+        return res.status(401).json({ error: "Токен не предоставлен" });
     }
 
-    const token = header.split(" ")[1];
+    const token = authHeader.split(" ")[1];
 
     if (!token) {
-        return res.status(401).json({ error: "Неверный формат токена"})
+        return res.status(401).json({ error: "Неверный формат токена" });
     }
-};
 
-try {
-    const decryptionJwt = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decryptionJwt.userId;
-    next();
-} catch (err) {
-    if (err.name === "TokenExpiredError") {
-        return res.satus(401).json({ error: "Токен истек"});
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.userId = decoded.userId;
+        next();
+    } catch (err) {
+        if (err.name === "TokenExpiredError") {
+            return res.status(401).json({ error: "Токен истёк" });
+        }
+        return res.status(401).json({ error: "Неверный токен" });
     }
-    return res.status(401).json({error: "Неверный токен"})
 };
 
 module.exports = authMiddleware;

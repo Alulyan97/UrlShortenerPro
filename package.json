@@ -20,6 +20,7 @@
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
     "jsonwebtoken": "^9.0.3",
+    "nanoid": "^5.1.9",
     "node-pg-migrate": "^8.0.4",
     "pg": "^8.20.0"
   },

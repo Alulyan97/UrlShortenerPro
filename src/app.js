@@ -4,11 +4,13 @@ const app = express();
 require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
+const linkRoutes = require("./routes/links");
 
 app.use(express.json());
 
 // Подключение роутов
-app.use("/api/auth", authRoutes)
+app.use("/api/auth", authRoutes),
+app.use("/api/links", linkRoutes);
 
 app.get("/", (req, res) => {
     res.send("Привет Экспресс")

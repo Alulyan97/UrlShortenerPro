@@ -3,6 +3,7 @@ const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
 const linkModel = require("../models/linkModel");
 const { generateShortCode } = require("../services/linkServices");
+const analyticsController = require("../controllers/analyticsControllers");
 
 router.use(authMiddleware);
 
@@ -75,5 +76,9 @@ router.delete("/:id", async (req, res) => {
         res.status(500).json({ error: "Ошибка сервера" });
     }
 });
+
+//Аналитика ссылок
+router.get("/:shortCode/analytics", analyticsController.analytics);
+
 
 module.exports = router;

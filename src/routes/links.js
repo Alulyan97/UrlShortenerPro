@@ -7,6 +7,82 @@ const analyticsController = require("../controllers/analyticsControllers");
 
 router.use(authMiddleware);
 
+/**
+ * @swagger
+ * /api/links:
+ *   post:
+ *     summary: Создать короткую ссылку
+ *     tags: [Links]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               originalUrl:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Ссылка создана
+ *       400:
+ *         description: URL обязателен
+ *
+ *   get:
+ *     summary: Список ссылок пользователя
+ *     tags: [Links]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Список ссылок
+ *
+ * /api/links/{id}:
+ *   delete:
+ *     summary: Удалить ссылку
+ *     tags: [Links]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Ссылка удалена
+ *       404:
+ *         description: Ссылка не найдена
+ */
+/**
+ * @swagger
+ * /api/links/{shortCode}/analytics:
+ *   get:
+ *     summary: Статистика по ссылке
+ *     tags: [Links]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: shortCode
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: days
+ *         schema:
+ *           type: integer
+ *         description: Количество дней
+ *     responses:
+ *       200:
+ *         description: Статистика
+ *       404:
+ *         description: Ссылка не найдена
+ */
+
 // Создание ссылки
 router.post("/", async (req, res) => {
     try {

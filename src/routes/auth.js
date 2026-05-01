@@ -8,7 +8,65 @@ const validate = require("../validation/validate");
 const { validateRegister, validateLogin } = require("../validation/authValidators");
 const authMiddleware = require("../middleware/authMiddleware");
 
-// Регистрация нового пользователя
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Регистрация пользователя
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Успешная регистрация
+ *       400:
+ *         description: Ошибка валидации
+ *       409:
+ *         description: Email уже занят
+ *
+ * /api/auth/login:
+ *   post:
+ *     summary: Вход в систему
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Успешный вход
+ *       401:
+ *         description: Неверные данные
+ *
+ * /api/auth/me:
+ *   get:
+ *     summary: Информация о текущем пользователе
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Данные пользователя
+ *       401:
+ *         description: Не авторизован
+ */
+
 router.post("/register", validateRegister, validate, async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -93,7 +151,7 @@ router.post("/login", validateLogin, validate, async (req, res) => {
 });
 
 // Информация о пользователе
-router.get("/my", authMiddleware, async (req,res) => {
+router.get("/me", authMiddleware, async (req,res) => {
     try{
         const result = await db.query(
             "SELECT id, email, created_at FROM users WHERE id = $1",

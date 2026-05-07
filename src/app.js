@@ -21,4 +21,7 @@ app.get("/", (req, res) => {
     res.send("Привет Экспресс")
 });
 
-app.listen(3000);
+app.listen(3000, () => {
+    console.log("Сервер запущен на http://localhost:3000");
+    console.log("Swagger документация: http://localhost:3000/api-docs");
+});

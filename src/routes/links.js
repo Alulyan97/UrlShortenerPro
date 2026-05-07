@@ -4,6 +4,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 const linkModel = require("../models/linkModel");
 const { generateShortCode } = require("../services/linkServices");
 const analyticsController = require("../controllers/analyticsControllers");
+const { parse } = require("dotenv");
 
 router.use(authMiddleware);
 
@@ -117,15 +118,26 @@ router.post("/", async (req, res) => {
 // Список ссылок пользователя
 router.get("/", async (req, res) => {
     try {
-        const links = await linkModel.findByUserId(req.userId);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        const links = await linkModel.paginated(req.userId, limit, page);
+        const total = await linkModel.totalLinks(req.userId);
 
         const formattedLinks = links.map(link => ({
+            id: link.id,
             shortCode: link.short_code,
             originalUrl: link.original_url,
             shortUrl: `${req.protocol}://${req.get("host")}/${link.short_code}`
         }));
 
-        res.json({ links: formattedLinks });
+        res.json({links: formattedLinks,
+                    pagination: {
+                        page: page,
+                        limit: limit,
+                        total: total,
+                        pages: Math.ceil(total / limit) 
+            }
+         });
 
     } catch (err) {
         console.error(err);

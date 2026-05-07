@@ -40,6 +40,30 @@ const linkModel = {
             [id, userId]
         );
         return result.rows[0] || null;
+    },
+
+//Пагинация
+    async paginated(userId, limit = 5, page = 1) {
+        const viewed = (page - 1) * limit;
+
+        const result = await db.query(
+            `SELECT id, short_code, original_url, created_at
+            FROM links
+            WHERE user_id = $1
+            ORDER BY created_at DESC
+            limit $2 OFFSET $3`,
+            [userId, limit, viewed]
+        );
+        return result.rows;
+    },
+
+  //Общий подсчет ссылок
+    async totalLinks(userId) {
+        const result = await db.query(
+            "SELECT COUNT(*) as total FROM links WHERE user_id = $1",
+            [userId]
+        );
+        return parseInt(result.rows[0].total);
     }
 };
 

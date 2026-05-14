@@ -7,6 +7,7 @@ const db = require("../config/db");
 const validate = require("../validation/validate");
 const { validateRegister, validateLogin } = require("../validation/authValidators");
 const authMiddleware = require("../middleware/authMiddleware");
+const { AlreadyExistsError } = require("../errorHandling/error");
 
 /**
  * @swagger
@@ -67,7 +68,7 @@ const authMiddleware = require("../middleware/authMiddleware");
  *         description: Не авторизован
  */
 
-router.post("/register", validateRegister, validate, async (req, res) => {
+router.post("/register", validateRegister, validate, async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
@@ -77,7 +78,7 @@ router.post("/register", validateRegister, validate, async (req, res) => {
         );
 
         if (emailVerify.rows.length > 0) {
-            return res.status(400).json({ error: "Email уже используется" });
+            throw new AlreadyExistsError("Email уже используется");
         }
 
         const hash = await bcrypt.hash(password, 10); 
@@ -102,13 +103,12 @@ router.post("/register", validateRegister, validate, async (req, res) => {
         });
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Ошибка сервера" });
+        next(err)
     }
 });
 
 // Вход пользователя
-router.post("/login", validateLogin, validate, async (req, res) => {
+router.post("/login", validateLogin, validate, async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
@@ -145,13 +145,12 @@ router.post("/login", validateLogin, validate, async (req, res) => {
         });
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Ошибка сервера" });
+        next(err)
     }
 });
 
 // Информация о пользователе
-router.get("/me", authMiddleware, async (req,res) => {
+router.get("/me", authMiddleware, async (req, res, next) => {
     try{
         const result = await db.query(
             "SELECT id, email, created_at FROM users WHERE id = $1",
@@ -164,8 +163,7 @@ router.get("/me", authMiddleware, async (req,res) => {
 
         res.json({ user: result.rows[0]})
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Ошибка сервера "})
+        next(err)
     }
 })
 

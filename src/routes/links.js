@@ -4,7 +4,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 const linkModel = require("../models/linkModel");
 const { generateShortCode } = require("../services/linkServices");
 const analyticsController = require("../controllers/analyticsControllers");
-const { parse } = require("dotenv");
+const { NotFoundError } = require("../errorHandling/error");
 
 router.use(authMiddleware);
 
@@ -85,13 +85,13 @@ router.use(authMiddleware);
  */
 
 // Создание ссылки
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
     try {
         const { originalUrl } = req.body;
         const userId = req.userId;
 
         if (!originalUrl) {
-            return res.status(400).json({ error: "URL обязателен" });
+            throw new InvalidRequestError("URL обязателен");
         }
 
         let shortCode;
@@ -110,13 +110,12 @@ router.post("/", async (req, res) => {
         });
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Ошибка сервера" });
+        next(err);
     }
 });
 
 // Список ссылок пользователя
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5;
@@ -140,13 +139,12 @@ router.get("/", async (req, res) => {
          });
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Ошибка сервера" });
+        next(err);
     }
 });
 
 // Удаление ссылки
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res, next) => {
     try {
         const { id } = req.params;
         const userId = req.userId;
@@ -154,14 +152,13 @@ router.delete("/:id", async (req, res) => {
         const deleted = await linkModel.delete(id, userId);
 
         if (!deleted) {
-            return res.status(404).json({ error: "Ссылка не найдена или нет доступа" });
+            throw new NotFoundError("Ссылка не найдена или нет доступа");
         }
 
         res.json({ message: "Ссылка удалена" });
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Ошибка сервера" });
+        next(err);
     }
 });
 

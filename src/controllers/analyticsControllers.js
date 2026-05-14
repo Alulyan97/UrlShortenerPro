@@ -1,8 +1,9 @@
 const linkModel = require("../models/linkModel");
 const analyticsModel = require("../models/analyticsModel");
+const { NotFoundError, NoAccesError } = require("../errorHandling/error");
 
 const analyticsController = {
-    async analytics(req, res) {
+    async analytics(req, res, next) {
         try {
             const { shortCode } = req.params;
             const days = parseInt(req.query.days) || 7;
@@ -10,11 +11,11 @@ const analyticsController = {
             // Поиск ссылки
             const link = await linkModel.findByShortCode(shortCode);
             if(!link) {
-                return res.status(404).json({error: "Ссылка не найдена"});
+                throw new NotFoundError("Ссылка не найдена");
             }
             // Поверка владельца
             if(link.user_id !== req.userId) {
-                return res.status(403).json({error: "Нет доступа"})
+                throw new NoAccesError("Нет доступа");
             }
 
             //Сбор статиастики
@@ -31,8 +32,7 @@ const analyticsController = {
                 topCountries:topCountries
             })
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: "Ошибка сервера" });
+            next(err);
         }
     }
 };

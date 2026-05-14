@@ -7,8 +7,7 @@ const db = require("../config/db");
 const validate = require("../validation/validate");
 const { validateRegister, validateLogin } = require("../validation/authValidators");
 const authMiddleware = require("../middleware/authMiddleware");
-const { AlreadyExistsError } = require("../errorHandling/error");
-
+const { AlreadyExistsError, NotAuthorizedError, NotFoundError } = require("../errorHandling/error");
 /**
  * @swagger
  * /api/auth/register:
@@ -78,7 +77,7 @@ router.post("/register", validateRegister, validate, async (req, res, next) => {
         );
 
         if (emailVerify.rows.length > 0) {
-            throw new AlreadyExistsError("Email уже используется");
+            throw new NotAuthorizedError("Неверный email или пароль");        
         }
 
         const hash = await bcrypt.hash(password, 10); 
@@ -125,7 +124,7 @@ router.post("/login", validateLogin, validate, async (req, res, next) => {
 
         const validPassword = await bcrypt.compare(password, user.password_hash);
         if (!validPassword) {
-            return res.status(401).json({ error: "Неверный email или пароль" });
+            throw new NotAuthorizedError("Неверный email или пароль");        
         }
 
         const token = jwt.sign(
@@ -158,7 +157,7 @@ router.get("/me", authMiddleware, async (req, res, next) => {
         );
 
         if(result.rows.length === 0) {
-            return res.status(404).json({ error: "Пользователь не найден"})
+            throw new NotFoundError("Пользователь не найден");
         }
 
         res.json({ user: result.rows[0]})

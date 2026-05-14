@@ -2,9 +2,10 @@ const linkModel = require("../models/linkModel");
 const analyticsModel = require("../models/analyticsModel");
 const geoip = require("geoip-lite");
 const redis = require("../config/redis");
+const { NotFoundError } = require("../errorHandling/error");
 
 const controller = {
-    async redirect(req, res) {
+    async redirect(req, res, next) {
         try {
             const { shortCode } = req.params;
 
@@ -43,7 +44,7 @@ const controller = {
 
             const link = await linkModel.findByShortCode(shortCode);
             if (!link) {
-                return res.status(404).json({ error: "Ссылка не найдена" });
+                throw new NotFoundError("Ссылка не найдена");            
             }
 
             await redis.set(`link:${shortCode}`, link.original_url, {
@@ -78,8 +79,7 @@ const controller = {
 
             return res.redirect(302, link.original_url);
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: "Ошибка сервера" });
+             next(err);
         }
     }
 };

@@ -1,71 +1,107 @@
-# UrlShortener Pro
+# UrlShortenerPro
 
 Сервис сокращения ссылок с аналитикой переходов.
 
-## Возможности
+## Что есть в проекте
 
 - Регистрация и вход (JWT токены)
 - Создание коротких ссылок
+- Пагинация списка ссылок
 - Статистика переходов (по дням, странам)
 - Кэширование в Redis
-- Полная Docker-контейнеризация
+- Защита от брутфорса (rate limiting)
+- Единый формат ошибок
+- Документация API (Swagger)
+- Два режима запуска (Docker / локально)
 
-## Технологии
+## С помощью чего реализовано
 
-| Категория | Стек |
-|-----------|------|
-| Backend | Node.js, Express |
-| База данных | PostgreSQL |
-| Кэш | Redis |
-| Аутентификация | JWT (jsonwebtoken, bcrypt) |
-| Валидация | express-validator |
-| Миграции | node-pg-migrate |
-| Геолокация | geoip-lite |
-| Контейнеризация | Docker, Docker Compose |
+- Node.js, Express
+- PostgreSQL, Redis
+- JWT (jsonwebtoken, bcrypt)
+- express-validator, express-rate-limit
+- node-pg-migrate
+- geoip-lite
+- swagger-jsdoc, swagger-ui-express
+- Docker, Docker Compose
 
 ## Структура проекта
-
 src/
-├── config/ # Подключение к БД и Redis
-├── controllers/ # Логика обработки запросов
-├── middleware/ # JWT-проверка, валидация
+├── config/ # Подключение к БД, Redis
+├── controllers/ # Редирект, аналитика
+├── errorHandling/ # Классы ошибок, rate limiter
+├── middleware/ # JWT-проверка, валидация, обработка ошибок
 ├── models/ # SQL-запросы к БД
 ├── routes/ # Роуты API
-├── services/ # Бизнес-логика
+├── services/ # Генерация кода, сохранение кликов
 ├── validation/ # Правила валидации
-└── app.js # Точка входа
+├── app.js # Точка входа
+└── swagger.js # Конфигурация Swagger
+
 
 ## Быстрый старт
 
-# 1. Клонировать
+### Полностью в Docker
+
 git clone https://github.com/Alulyan97/UrlShortenerPro.git
 cd urlshortener-pro
-
-# 2. Настроить .env
-cp .env.example .env
-
-# 3. Запустить
+copy .env.example .env
 docker-compose up -d
-
-# 4. Применить миграции
 docker-compose exec app npm run migrate up
 
 Сервер запустится на http://localhost:3000.
 
-API
-Аутентификация
+### БД и Redis в Docker, локально
 
-POST	/api/auth/register	Регистрация
-POST	/api/auth/login	Вход
-GET	    /api/auth/me	Профиль (требует токен)
+git clone https://github.com/Alulyan97/UrlShortenerPro.git
+cd urlshortener-pro
+copy .env.example .env
+npm install
+docker-compose -f docker-compose.dev.yml up -d
+npm run migrate up
+npm run dev
 
-Ссылки
+## API
 
-POST	/api/links	Создать ссылку (требует токен)
-GET  	/api/links	Список ссылок (требует токен)
-DELETE	/api/links/:id	Удалить ссылку (требует токен)
-GET	    /api/links/:code/analytics	Статистика (требует токен)
+### Аутентификация
 
-Редирект
+POST /api/auth/register - Регистрация
+POST /api/auth/login - Вход
+GET /api/auth/me - Профиль 
 
-GET	/:shortCode	Переход по ссылке
+### Ссылки
+
+POST /api/links - Создать ссылку (требует токен)
+GET /api/links?page=1&limit=10 - Список с пагинацией (требует токен)
+DELETE /api/links/:id - Удалить ссылку (требует токен)
+GET /api/links/:code/analytics?days=7 - Статистика (требует токен)
+
+### Редирект
+
+GET /:shortCode - Переход по ссылке
+
+## Обработка ошибок
+
+Все ошибки возвращаются в едином формате:
+
+{
+  "success": false,
+  "status": 404,
+  "message": "Ссылка не найдена",
+  "timestamp": "2026-05-16T12:00:00.000Z"
+}
+
+## Документация
+
+После запуска открыть http://localhost:3000/api-docs
+
+## Переменные окружения (.env)
+
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=urlshortener
+JWT_SECRET=ваш_секретный_ключ
+JWT_REFRESH_SECRET=ваш_рефреш_ключ
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/urlshortener
+DATABASE_URL_DOCKER=postgresql://postgres:postgres@postgres:5432/urlshortener
+REDIS_URL=redis://localhost:6379

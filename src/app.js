@@ -2,6 +2,7 @@ const express = require ("express");
 const app = express();
 const swaggerUi = require("swagger-ui-express");
 const swagger = require("./swagger");
+const { apiLimit, loginLimit } = require("./errorHandling/rateLimiter");
 
 require("dotenv").config();
 
@@ -13,6 +14,8 @@ const errorMiddleware = require("./middleware/errorMiddleware");
 app.use(express.json());
 
 // Подключение роутов
+app.use("/api", apiLimit);
+app.use("/api/auth/login", loginLimit);
 app.use("/api/auth", authRoutes);
 app.use("/api/links", linkRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swagger));

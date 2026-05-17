@@ -34,7 +34,7 @@ app.use((req, res) => {
 app.use(errorMiddleware);
 
 app.get("/", (req, res) => {
-    res.send("Привет Экспресс")
+    res.send("Привет Экспресс");
 });
 
 app.listen(3000, () => {

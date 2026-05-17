@@ -10,8 +10,8 @@ const analyticsModel = {
         );
         return result.rows[0];
     },
-//общее количество кликов по ссылке
-        async totalClicks(linkId) {
+    //общее количество кликов по ссылке
+    async totalClicks(linkId) {
         const result = await db.query(
             "SELECT COUNT(*) as total FROM analytics WHERE link_id = $1",
             [linkId]
@@ -19,7 +19,7 @@ const analyticsModel = {
         return parseInt(result.rows[0].total);
     },
 
-// Клики по дням
+    // Клики по дням
     async clicksByDay(linkId, days = 7) {
         const result = await db.query(
             `SELECT DATE(clicked_at) as day, COUNT(*) as count
@@ -32,8 +32,8 @@ const analyticsModel = {
         return result.rows;
     },
 
-//Топ стран
-async topCountries(linkId) {
+    //Топ стран
+    async topCountries(linkId) {
         const result = await db.query(
             `SELECT country, COUNT(*) as count 
             FROM analytics
@@ -45,6 +45,6 @@ async topCountries(linkId) {
         );
         return result.rows;
     }
-}
+};
 
 module.exports = analyticsModel;

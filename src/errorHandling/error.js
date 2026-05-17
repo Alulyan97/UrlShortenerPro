@@ -43,4 +43,4 @@ module.exports = {
     NoAccesError,
     NotFoundError,
     AlreadyExistsError
-}
+};

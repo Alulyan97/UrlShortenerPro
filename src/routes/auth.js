@@ -8,6 +8,7 @@ const validate = require("../validation/validate");
 const { validateRegister, validateLogin } = require("../validation/authValidators");
 const authMiddleware = require("../middleware/authMiddleware");
 const { AlreadyExistsError, NotAuthorizedError, NotFoundError } = require("../errorHandling/error");
+
 /**
  * @swagger
  * /api/auth/register:
@@ -77,9 +78,8 @@ router.post("/register", validateRegister, validate, async (req, res, next) => {
         );
 
         if (emailVerify.rows.length > 0) {
-            throw new NotAuthorizedError("Неверный email или пароль");        
+            throw new AlreadyExistsError("Email уже используется");
         }
-
         const hash = await bcrypt.hash(password, 10); 
 
         const result = await db.query(
@@ -102,7 +102,7 @@ router.post("/register", validateRegister, validate, async (req, res, next) => {
         });
 
     } catch (err) {
-        next(err)
+        next(err);
     }
 });
 
@@ -117,7 +117,7 @@ router.post("/login", validateLogin, validate, async (req, res, next) => {
         );
 
         if (userResult.rows.length === 0) {
-            return res.status(401).json({ error: "Неверный email или пароль" });
+            throw new NotAuthorizedError("Неверный email или пароль");
         }
 
         const user = userResult.rows[0];
@@ -144,7 +144,7 @@ router.post("/login", validateLogin, validate, async (req, res, next) => {
         });
 
     } catch (err) {
-        next(err)
+        next(err);
     }
 });
 
@@ -160,10 +160,10 @@ router.get("/me", authMiddleware, async (req, res, next) => {
             throw new NotFoundError("Пользователь не найден");
         }
 
-        res.json({ user: result.rows[0]})
+        res.json({ user: result.rows[0]});
     } catch (err) {
-        next(err)
+        next(err);
     }
-})
+});
 
 module.exports = router;

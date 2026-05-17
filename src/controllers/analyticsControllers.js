@@ -30,7 +30,7 @@ const analyticsController = {
                 days: days,
                 clicksByDay: clicksByDay,
                 topCountries:topCountries
-            })
+            });
         } catch (err) {
             next(err);
         }

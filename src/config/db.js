@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const { Pool } = require ("pg");
 
 // Подключение к бд
@@ -12,7 +12,7 @@ const testConnection = async () => {
         await pool.query("SELECT 1");
         console.log("База данных подключена");
     } catch (err) {
-        console.error("База данных недоступна")
+        console.error("База данных недоступна", err.message);
     }
 };
 

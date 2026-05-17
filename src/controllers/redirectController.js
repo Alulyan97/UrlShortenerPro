@@ -79,7 +79,7 @@ const controller = {
 
             return res.redirect(302, link.original_url);
         } catch (err) {
-             next(err);
+            next(err);
         }
     }
 };

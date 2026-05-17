@@ -4,7 +4,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 const linkModel = require("../models/linkModel");
 const { generateShortCode } = require("../services/linkServices");
 const analyticsController = require("../controllers/analyticsControllers");
-const { NotFoundError } = require("../errorHandling/error");
+const { NotFoundError, InvalidRequestError  } = require("../errorHandling/error");
 
 router.use(authMiddleware);
 
@@ -130,13 +130,13 @@ router.get("/", async (req, res, next) => {
         }));
 
         res.json({links: formattedLinks,
-                    pagination: {
-                        page: page,
-                        limit: limit,
-                        total: total,
-                        pages: Math.ceil(total / limit) 
+            pagination: {
+                page: page,
+                limit: limit,
+                total: total,
+                pages: Math.ceil(total / limit) 
             }
-         });
+        });
 
     } catch (err) {
         next(err);

@@ -11,7 +11,8 @@
     "migrate:down": "node-pg-migrate down",
     "migrate:create": "node-pg-migrate create",
     "lint": "eslint src/**/*.js",
-    "lint:fix": "eslint src/**/*.js --fix"
+    "lint:fix": "eslint src/**/*.js --fix",
+    "test": "jest --forceExit --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +35,9 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.0",
-    "nodemon": "^3.1.14"
+    "eslint-plugin-jest": "^29.15.2",
+    "jest": "^30.4.2",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
   }
 }

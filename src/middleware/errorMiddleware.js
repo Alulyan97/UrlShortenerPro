@@ -1,4 +1,4 @@
-const errorMiddleware = (err, req, res) => {
+const errorMiddleware = (err, req, res, next) => {
     console.error(err.message);
 
     if (err.success === false) {

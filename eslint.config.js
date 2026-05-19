@@ -3,12 +3,11 @@ const jest = require("eslint-plugin-jest");
 
 module.exports = [
     js.configs.recommended,
-    // Добавляем Jest конфиг для всех тестовых файлов
     {
         files: ["**/*.test.js", "**/*.spec.js", "tests/**/*.js"],
         ...jest.configs["flat/recommended"],
     },
-    // Основной конфиг для остальных файлов
+
     {
         languageOptions: {
             ecmaVersion: "latest",

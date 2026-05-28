@@ -12,12 +12,14 @@
 - Защита от брутфорса (rate limiting)
 - Единый формат ошибок
 - Документация API (Swagger)
+- Nginx как reverse proxy
 - Два режима запуска (Docker / локально)
 
 ## С помощью чего реализовано
 
 - Node.js, Express
 - PostgreSQL, Redis
+- Nginx
 - JWT (jsonwebtoken, bcrypt)
 - express-validator, express-rate-limit
 - node-pg-migrate
@@ -26,6 +28,7 @@
 - Docker, Docker Compose
 
 ## Структура проекта
+
 src/
 ├── config/ # Подключение к БД, Redis
 ├── controllers/ # Редирект, аналитика
@@ -37,21 +40,33 @@ src/
 ├── validation/ # Правила валидации
 ├── app.js # Точка входа
 └── swagger.js # Конфигурация Swagger
-
+nginx/
+└── default.conf # Конфигурация Nginx
 
 ## Быстрый старт
+
+## Nginx
+
+Проект использует Nginx как reverse proxy. Все запросы приходят на порт 80, Nginx проксирует их на Express (порт 3000 внутри Docker).
+
+Конфигурация Nginx находится в `nginx/default.conf`.
+
+После запуска сервер доступен по адресу `http://localhost` (без указания порта).
 
 ### Полностью в Docker
 
 git clone https://github.com/Alulyan97/UrlShortenerPro.git
-cd urlshortener-pro
+cd UrlShortenerPro
 copy .env.example .env
 docker-compose up -d
 docker-compose exec app npm run migrate up
 
-Сервер запустится на http://localhost:3000.
 
-### БД и Redis в Docker, локально
+Сервер запустится на http://localhost (порт 80, без указания порта).
+
+Nginx принимает запросы на порту 80 и проксирует их на Express (порт 3000 внутри Docker).
+
+### БД и Redis в Docker, код локально
 
 git clone https://github.com/Alulyan97/UrlShortenerPro.git
 cd urlshortener-pro
@@ -61,24 +76,27 @@ docker-compose -f docker-compose.dev.yml up -d
 npm run migrate up
 npm run dev
 
+
+Сервер запустится на http://localhost:3000.
+
 ## API
 
 ### Аутентификация
 
-POST /api/auth/register - Регистрация
-POST /api/auth/login - Вход
-GET /api/auth/me - Профиль 
+- POST /api/auth/register — Регистрация
+- POST /api/auth/login — Вход
+- GET /api/auth/me — Профиль (требует токен)
 
 ### Ссылки
 
-POST /api/links - Создать ссылку (требует токен)
-GET /api/links?page=1&limit=10 - Список с пагинацией (требует токен)
-DELETE /api/links/:id - Удалить ссылку (требует токен)
-GET /api/links/:code/analytics?days=7 - Статистика (требует токен)
+- POST /api/links — Создать ссылку (требует токен)
+- GET /api/links?page=1&limit=10 — Список с пагинацией (требует токен)
+- DELETE /api/links/:id — Удалить ссылку (требует токен)
+- GET /api/links/:code/analytics?days=7 — Статистика (требует токен)
 
 ### Редирект
 
-GET /:shortCode - Переход по ссылке
+- GET /:shortCode — Переход по ссылке
 
 ## Обработка ошибок
 
@@ -93,7 +111,7 @@ GET /:shortCode - Переход по ссылке
 
 ## Документация
 
-После запуска открыть http://localhost:3000/api-docs
+После запуска открыть http://localhost/api-docs (или http://localhost:3000/api-docs при локальном запуске).
 
 ## Переменные окружения (.env)
 

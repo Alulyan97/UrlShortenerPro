@@ -8,7 +8,7 @@ exports.up = (pgm) => {
         );
 
         CREATE INDEX idx_users_email ON users(email);
-        `)
+        `);
 };
 
 exports.down = (pgm) => {

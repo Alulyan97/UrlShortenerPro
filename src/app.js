@@ -14,11 +14,17 @@ const errorMiddleware = require("./middleware/errorMiddleware");
 app.use(express.json());
 
 // Подключение роутов
+app.set("proxy", 1);
 app.use("/api", apiLimit);
 app.use("/api/auth/login", loginLimit);
 app.use("/api/auth", authRoutes);
 app.use("/api/links", linkRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swagger));
+
+app.get("/", (req, res) => {
+    res.send("Привет Экспресс");
+});
+
 app.use("/", redirect);
 
 // 404 для всех остальных маршрутов
@@ -32,10 +38,6 @@ app.use((req, res) => {
 });
 
 app.use(errorMiddleware);
-
-app.get("/", (req, res) => {
-    res.send("Привет Экспресс");
-});
 
 app.listen(3000, () => {
     console.log("Сервер запущен на http://localhost:3000");

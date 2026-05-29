@@ -1,5 +1,4 @@
-exports.up = (pgm) => {
-  pgm.sql(`
+exports.up = (pgm) => {pgm.sql(`
     CREATE TABLE analytics (
       id SERIAL PRIMARY KEY,
       link_id INTEGER NOT NULL REFERENCES links(id) ON DELETE CASCADE,
@@ -13,6 +12,5 @@ exports.up = (pgm) => {
   `);
 };
 
-exports.down = (pgm) => {
-  pgm.sql(`DROP TABLE IF EXISTS analytics CASCADE;`);
+exports.down = (pgm) => {pgm.sql(`DROP TABLE IF EXISTS analytics CASCADE`);
 };

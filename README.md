@@ -4,6 +4,7 @@
 
 ## Что есть в проекте
 
+- Мини - Веб-интерфейс, для визуальной оценки (HTML, CSS, JavaScript)
 - Регистрация и вход (JWT токены)
 - Создание коротких ссылок
 - Пагинация списка ссылок
@@ -25,6 +26,7 @@
 - node-pg-migrate
 - geoip-lite
 - swagger-jsdoc, swagger-ui-express
+- HTML, CSS, JavaScript
 - Docker, Docker Compose
 
 ## Структура проекта
@@ -42,6 +44,12 @@ src/
 └── swagger.js # Конфигурация Swagger
 nginx/
 └── default.conf # Конфигурация Nginx
+public/
+├── index.html        # Страница входа и регистрации
+├── dashboard.html    # Личный кабинет
+├── style.css         # Стили
+├── script.js         # Логика входа/регистрации
+└── dashboard.js      # Логика личного кабинета
 
 ## Быстрый старт
 
@@ -61,8 +69,7 @@ copy .env.example .env
 docker-compose up -d
 docker-compose exec app npm run migrate up
 
-
-Сервер запустится на http://localhost (порт 80, без указания порта).
+После запуска откройте http://localhost — страница входа. После входа откроется личный кабинет.
 
 Nginx принимает запросы на порту 80 и проксирует их на Express (порт 3000 внутри Docker).
 

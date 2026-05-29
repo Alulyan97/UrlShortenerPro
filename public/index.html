@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UrlShortener Pro</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>UrlShortener Pro</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('login')">Вход</button>
+            <button class="tab" onclick="showTab('register')">Регистрация</button>
+        </div>
+
+        <!-- Форма входа -->
+        <form id="login-form" class="form active">
+            <input type="email" id="login-email" placeholder="Email" required>
+            <input type="password" id="login-password" placeholder="Пароль" required>
+            <button type="submit">Войти</button>
+            <p class="error" id="login-error"></p>
+        </form>
+
+        <!-- Форма регистрации -->
+        <form id="register-form" class="form">
+            <input type="email" id="reg-email" placeholder="Email" required>
+            <input type="password" id="reg-password" placeholder="Пароль (минимум 8 символов, заглавная, цифра, спецсимвол)" required>
+            <button type="submit">Зарегистрироваться</button>
+            <p class="error" id="reg-error"></p>
+        </form>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>

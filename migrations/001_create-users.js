@@ -11,6 +11,4 @@ exports.up = (pgm) => {
         `);
 };
 
-exports.down = (pgm) => {
-  pgm.sql(`DROP TABLE IF EXISTS users`);
-};
+exports.down = (pgm) => {pgm.sql(`DROP TABLE IF EXISTS users`);};

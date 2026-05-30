@@ -1,12 +1,13 @@
 require("dotenv").config();
-const { Pool } = require ("pg");
+const { Pool } = require("pg");
 
-// Подключение к бд
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.DATABASE_URL?.includes("render.com") 
+        ? { rejectUnauthorized: false } 
+        : false
 });
 
-// Проверка работы бд
 const testConnection = async () => {
     try {
         await pool.query("SELECT 1");

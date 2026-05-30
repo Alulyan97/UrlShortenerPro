@@ -12,7 +12,8 @@
     "migrate:create": "node-pg-migrate create",
     "lint": "eslint src/**/*.js",
     "lint:fix": "eslint src/**/*.js --fix",
-    "test": "jest --forceExit --detectOpenHandles"
+    "test": "jest --forceExit --detectOpenHandles",
+    "start:render": "npm run migrate up && node src/app.js"
   },
   "keywords": [],
   "author": "",

@@ -1,5 +1,7 @@
 # UrlShortenerPro
 
+[![Tests](https://github.com/Alulyan97/UrlShortenerPro/actions/workflows/test.yml/badge.svg)](https://github.com/Alulyan97/UrlShortenerPro/actions/workflows/test.yml)
+
 Сервис сокращения ссылок с аналитикой переходов.
 Продакшн-среда: Сервис развернут на Render с использованием Docker, PostgreSQL и Redis. Доступен по адресу:
 https://urlshortenerpro.onrender.com/

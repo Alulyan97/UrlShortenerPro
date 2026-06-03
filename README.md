@@ -1,6 +1,8 @@
 # UrlShortenerPro
 
 Сервис сокращения ссылок с аналитикой переходов.
+Продакшн-среда: Сервис развернут на Render с использованием Docker, PostgreSQL и Redis. Доступен по адресу:
+https://urlshortenerpro.onrender.com/
 
 ## Что есть в проекте
 
